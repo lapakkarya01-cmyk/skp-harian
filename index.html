@@ -74,6 +74,11 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
 .rg-bg{fill:none;stroke:#eef0f6;stroke-width:12}.rg-fg{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
 .rg-t{font:700 24px Inter,system-ui,sans-serif;text-anchor:middle;fill:var(--txt)}
 .ringc b{display:block;margin-top:6px}.ringc span{color:var(--mut);font-size:13px}
+#pgBox{display:none;position:fixed;inset:0;background:rgba(17,17,40,.55);z-index:300;align-items:center;justify-content:center;padding:16px}
+.pgc{background:#fff;border-radius:20px;padding:26px 30px;text-align:center;width:300px;max-width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.pgc svg{width:140px;height:140px}.pgc b{display:block;margin-top:6px;font-size:16px}.pgc span{display:block;color:var(--mut);font-size:13px;min-height:20px}
+.pgc small{display:block;color:var(--mut);font-size:11px;margin-top:10px}
+.pgbar{height:8px;background:#eef0f6;border-radius:8px;margin-top:10px;overflow:hidden}.pgbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4f46e5,#7c3aed);transition:width .25s linear}
 /* ===== LAPORAN ===== */
 .rpt{background:#fff;width:210mm;max-width:100%;margin:0 auto;padding:12mm;font:11pt Arial,sans-serif;color:#000;border:1px solid var(--line)}
 .rpt h3{text-align:center;font-size:14pt;margin:2mm 0 5mm}
@@ -119,6 +124,11 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
 </head>
 <body class="locked">
 <datalist id="dlSatuan"></datalist><div id="loading"></div><div id="toast"></div>
+<div id="pgBox"><div class="pgc">
+ <svg viewBox="0 0 120 120"><circle class="rg-bg" cx="60" cy="60" r="52"/><circle id="pgRing" cx="60" cy="60" r="52" transform="rotate(-90 60 60)" style="fill:none;stroke:#4f46e5;stroke-width:12;stroke-linecap:round;stroke-dasharray:326.73;stroke-dashoffset:326.73;transition:stroke-dashoffset .25s linear"/><text id="pgPct" class="rg-t" x="60" y="68">0%</text></svg>
+ <b id="pgTitle">Menyimpan...</b><span id="pgLbl"></span>
+ <div class="pgbar"><i id="pgBar"></i></div><small>Mohon tunggu, jangan tutup halaman ini.</small>
+</div></div>
 <div id="login"><div class="box">
  <h1>📋 SKP Harian</h1><div class="ver lbl-ver"></div>
  <div id="lgForm">
@@ -272,14 +282,14 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
 // ===== KONFIGURASI =====
 // Kosong  = aplikasi dibuka lewat URL Web App Apps Script (otomatis memakai google.script.run)
 // Diisi   = aplikasi di GitHub Pages: tempel URL Web App berakhiran /exec
-const API_URL = "https://script.google.com/macros/s/AKfycbx3WruzjHPUsr9lVOh1g9qk-_zv5J0qL6fxVxJGoQu2UyV2m-hetExLw2dCSP7d5aE/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyWYT5HWgmNhHbn1SLKMbM7QTrbpj2nyDT5YM5x9ssDMAm5gfXjZHGBNi2_SHmTuAla/exec";
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let PEG = {}, LIST = [], FOTO = [{},{},{},{}], EDIT = null, CUR = null;
 
 // ===== VERSI, LOGIN, SESI =====
-const APP_VERSION = '1.1';   // 1.0 -> 1.1 ... 1.9 -> 2.0
+const APP_VERSION = '1.2';   // 1.0 -> 1.1 ... 1.9 -> 2.0
 let TOKEN = '', USER = '', ADMINKEY = '', ADLIST = [];
 const store = {
   get: k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } },
@@ -355,6 +365,29 @@ async function adAksi(a, u) {
   if (a === 'status') adCall('adminStatus', { username: u, status: x.status === 'Aktif' ? 'Nonaktif' : 'Aktif' }, 'Status diubah');
   if (a === 'hapus' && confirm('Hapus akun ' + u + '? Data laporannya tetap tersimpan di Google Sheets.')) adCall('adminHapus', { username: u }, 'Akun dihapus');
 }
+
+// ===== PROGRES SIMPAN (0% - 100%) =====
+// Setiap tahap nyata (unggah tiap foto, lalu simpan data) menaikkan persentase; di dalam tahap persen merayap pelan.
+const Prog = {
+  v: 0, cap: 0, done: 0, steps: 1, timer: null,
+  start(title, steps) {
+    this.steps = Math.max(1, steps); this.done = 0; this.v = 0;
+    $('pgTitle').textContent = title; $('pgBox').style.display = 'flex'; this.next('Memulai...');
+    clearInterval(this.timer); this.timer = setInterval(() => { this.v += (this.cap - this.v) * 0.07; this.draw(); }, 100); this.draw();
+  },
+  next(label) { this.cap = (this.done + 1) / this.steps * 100 - 3; $('pgLbl').textContent = label; },
+  ok() { this.done++; this.v = Math.max(this.v, this.done / this.steps * 100 - 0.5); this.draw(); },
+  draw() {
+    const p = Math.min(100, Math.floor(this.v));
+    $('pgPct').textContent = p + '%'; $('pgBar').style.width = p + '%';
+    $('pgRing').style.strokeDashoffset = 326.73 * (1 - p / 100);
+  },
+  async end(label) {
+    clearInterval(this.timer); this.v = 100; this.draw(); $('pgLbl').textContent = label || 'Selesai';
+    await new Promise(r => setTimeout(r, 600)); $('pgBox').style.display = 'none';
+  },
+  fail() { clearInterval(this.timer); $('pgBox').style.display = 'none'; }
+};
 
 function api(action, payload) {
   const body = JSON.stringify(Object.assign({ action, token: TOKEN }, payload || {}));
@@ -458,14 +491,21 @@ async function savePeg() {
   const p = {}; for (const k in PF) p[k] = $(PF[k]).value.trim();
   if (!p.nama) return toast('Nama tidak boleh kosong', 1);
   if (!PEG.nama && !confirm('Nama "' + p.nama + '" hanya bisa diisi satu kali dan akan terkunci. Hanya admin yang bisa mengubahnya. Lanjutkan?')) return;
-  p.ttdAtasan = TTD.a.url || ''; p.ttdAtasanData = TTD.a.data || '';
-  p.ttdPegawai = TTD.p.url || ''; p.ttdPegawaiData = TTD.p.data || '';
+  p.ttdAtasan = TTD.a.url || ''; p.ttdPegawai = TTD.p.url || '';
+  const up = [['a', 'ttdAtasan', 'ttd_atasan', 'tanda tangan atasan'], ['p', 'ttdPegawai', 'ttd_pegawai', 'tanda tangan pegawai']].filter(x => TTD[x[0]].data);
+  Prog.start('Menyimpan pengaturan', up.length + 1);
   try {
+    for (const x of up) {
+      Prog.next('Mengunggah ' + x[3] + '...');
+      p[x[1]] = (await call('uploadFoto', { data: TTD[x[0]].data, nama: x[2], size: 600 })).url; Prog.ok();
+    }
+    Prog.next('Menyimpan data pengaturan...');
     const res = await call('savePegawai', { pegawai: p });
+    Prog.ok(); await Prog.end('Simpan berhasil');
     for (const k in PF) PEG[k] = p[k]; PEG.nama = res.nama;
     PEG.ttdAtasan = res.ttdAtasan; PEG.ttdPegawai = res.ttdPegawai; fillPeg(); toast('Simpan berhasil');
   }
-  catch (e) { toast('Gagal menyimpan data: ' + e.message, 1); }
+  catch (e) { Prog.fail(); toast('Gagal menyimpan data: ' + e.message, 1); }
 }
 
 // ===== MASTER KEGIATAN =====
@@ -492,8 +532,9 @@ async function saveMaster() {
     keg.push({ uraian: u, target: Number(t), satuan: tr.querySelector('.ms').value.trim() });
   }
   const ket = $('mKet').value.split('\n').map(s => s.trim()).filter(Boolean);
-  try { await call('saveMaster', { master: { kegiatan: keg, keterangan: ket } }); MASTER = { kegiatan: keg, keterangan: ket }; fillMaster(); toast('Simpan berhasil'); }
-  catch (e) { toast('Gagal menyimpan data: ' + e.message, 1); }
+  Prog.start('Menyimpan master kegiatan', 1); Prog.next('Menyimpan data...');
+  try { await call('saveMaster', { master: { kegiatan: keg, keterangan: ket } }); Prog.ok(); await Prog.end('Simpan berhasil'); MASTER = { kegiatan: keg, keterangan: ket }; fillMaster(); toast('Simpan berhasil'); }
+  catch (e) { Prog.fail(); toast('Gagal menyimpan data: ' + e.message, 1); }
 }
 function capOpts(v) {
   const L = [0, 25, 50, 75, 100], has = v !== undefined && v !== null && v !== '' && !isNaN(Number(v));
@@ -628,14 +669,27 @@ async function saveReport() {
   if (!items.length) return toast('Uraian kegiatan tidak boleh kosong', 1);
   if (!EDIT && LIST.some(x => x.tanggal === tgl) && !confirm('Laporan tanggal ini sudah ada. Timpa?')) return;
   $('btnSave').disabled = true; $('btnSave').textContent = 'Menyimpan...';
-  try { await call('save', { tanggal: tgl, items, fotos: FOTO }); toast('Simpan berhasil'); EDIT = null; show('riwayat'); }
-  catch (e) { toast('Gagal menyimpan data: ' + e.message, 1); }
+  const baru = FOTO.map((f, i) => f.data ? i : -1).filter(i => i >= 0);
+  Prog.start('Menyimpan laporan', baru.length + 1);
+  try {
+    for (let n = 0; n < baru.length; n++) {
+      const i = baru[n];
+      Prog.next('Mengunggah foto ' + (i + 1) + ' (' + (n + 1) + ' dari ' + baru.length + ')');
+      FOTO[i].url = (await call('uploadFoto', { data: FOTO[i].data, nama: tgl + '_foto' + (i + 1), size: 1000 })).url;
+      delete FOTO[i].data; Prog.ok();
+    }
+    Prog.next('Menyimpan data laporan...');
+    await call('save', { tanggal: tgl, items, fotos: FOTO.map(f => ({ url: f.url || '', ket: f.ket || '' })) });
+    Prog.ok(); await Prog.end('Simpan berhasil');
+    toast('Simpan berhasil'); EDIT = null; show('riwayat');
+  } catch (e) { Prog.fail(); toast('Gagal menyimpan data: ' + e.message, 1); }
   $('btnSave').disabled = false; $('btnSave').textContent = 'Simpan';
 }
 async function delReport(t) {
   if (!confirm('Hapus laporan ' + fmtLong(t) + '?')) return;
-  try { await call('delete', { tanggal: t }); toast('Data berhasil dihapus'); refresh(); }
-  catch (e) { toast('Gagal menghapus data: ' + e.message, 1); }
+  Prog.start('Menghapus laporan', 1); Prog.next('Menghapus data dan foto...');
+  try { await call('delete', { tanggal: t }); Prog.ok(); await Prog.end('Terhapus'); toast('Data berhasil dihapus'); refresh(); }
+  catch (e) { Prog.fail(); toast('Gagal menghapus data: ' + e.message, 1); }
 }
 
 // ===== LAPORAN / CETAK =====
