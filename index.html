@@ -8,11 +8,11 @@
 :root{--bg:#f4f6fa;--card:#fff;--line:#d9dee7;--pri:#1f4e9c;--txt:#1d2433;--mut:#667085;--red:#c0392b}
 *{box-sizing:border-box}
 body{margin:0;font:15px/1.5 system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--txt)}
-.sidebar{position:fixed;inset:0 auto 0 0;width:220px;background:#16264a;color:#fff;padding:16px 10px;z-index:20;transition:transform .2s}
+.sidebar{position:fixed;inset:0 auto 0 0;width:220px;background:#1e1b4b;color:#fff;padding:16px 10px;z-index:20;transition:transform .2s}
 .sidebar h1{font-size:16px;margin:4px 10px 18px}
 .sidebar a{display:block;padding:11px 12px;border-radius:8px;color:#cfd8ee;text-decoration:none;cursor:pointer;margin-bottom:4px}
-.sidebar a.on,.sidebar a:hover{background:#2a4380;color:#fff}
-.topbar{display:none;position:fixed;top:0;left:0;right:0;height:50px;background:#16264a;color:#fff;align-items:center;padding:0 12px;z-index:15;gap:12px}
+.sidebar a.on,.sidebar a:hover{background:#4338ca;color:#fff}
+.topbar{display:none;position:fixed;top:0;left:0;right:0;height:50px;background:#1e1b4b;color:#fff;align-items:center;padding:0 12px;z-index:15;gap:12px}
 .topbar button{background:none;border:0;color:#fff;font-size:24px}
 .main{margin-left:220px;padding:22px;max-width:1100px}
 .view{display:none}.view.on{display:block}
@@ -37,7 +37,7 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
 .badge{padding:2px 8px;border-radius:10px;font-size:12px;background:#e3f4e8;color:#1b6b3a}.badge.w{background:#fdf0d5;color:#8a5a00}
 .ttdp{display:none;max-height:90px;max-width:100%;background:#fff;border:1px dashed var(--line);border-radius:6px;padding:4px;margin-bottom:6px}
 .rpt .sp{display:flex;justify-content:center;align-items:flex-end}.rpt .sp img{height:100%;max-width:100%;object-fit:contain;mix-blend-mode:multiply}
-#login{display:none;position:fixed;inset:0;background:#16264a;align-items:center;justify-content:center;z-index:200;padding:16px;overflow:auto}
+#login{display:none;position:fixed;inset:0;background:#1e1b4b;align-items:center;justify-content:center;z-index:200;padding:16px;overflow:auto}
 body.locked #login{display:flex}body.locked .sidebar,body.locked .topbar,body.locked .main{display:none}
 #login .box{background:#fff;border-radius:12px;padding:24px;width:100%;max-width:360px}
 #login h1{margin:0 0 2px;font-size:20px}#login .ver{color:var(--mut);font-size:13px;margin-bottom:10px}
@@ -49,6 +49,31 @@ body.locked #login{display:flex}body.locked .sidebar,body.locked .topbar,body.lo
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:8px;display:none;z-index:99}
 #toast.err{background:var(--red)}
 #loading{position:fixed;top:0;left:0;right:0;height:3px;background:var(--pri);display:none;z-index:99}
+/* ===== TAMPILAN MODERN ===== */
+:root{--bg:#f4f5fb;--line:#e6e8f0;--pri:#4f46e5;--txt:#1e2235;--mut:#6b7280}
+body{font-family:Inter,system-ui,"Segoe UI",Arial,sans-serif;background:var(--bg)}
+.sidebar{background:linear-gradient(180deg,#1e1b4b,#312e81);box-shadow:4px 0 24px rgba(30,27,75,.18)}
+.sidebar a{display:flex;gap:10px;align-items:center;border-radius:12px;padding:11px 14px;transition:background .15s}
+.sidebar a.on{background:rgba(255,255,255,.16);color:#fff}.sidebar a:hover{background:rgba(255,255,255,.1)}
+.main{max-width:1180px}h2{font-size:22px;font-weight:700}
+.card{border-radius:16px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05)}
+button.b{border-radius:10px;font-weight:600;transition:filter .15s,transform .05s}button.b:hover{filter:brightness(1.08)}button.b:active{transform:scale(.98)}
+button.b.g{background:#eef0fb;color:#3730a3}
+input,select,textarea{border-radius:10px;border:1px solid #dfe3ee;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--pri);box-shadow:0 0 0 3px rgba(79,70,229,.15)}
+table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);background:#f8f9fd}
+.kg{border-radius:14px}.pk{border-radius:12px;background:#f7f7ff}.pk:hover{background:#ecebff}
+.badge{font-weight:600}
+#login{background:linear-gradient(135deg,#1e1b4b,#4f46e5)}#login .box{border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.hero{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border-radius:20px;padding:22px 24px;margin-bottom:16px;box-shadow:0 10px 30px rgba(79,70,229,.3)}
+.hero small{opacity:.8}.hero b{display:block;font-size:24px;margin:2px 0}.hero div div{opacity:.85;font-size:14px}
+.hero button.b{background:#fff;color:#4338ca}
+.stat{display:flex;gap:14px;align-items:center}.stat i{font-style:normal;font-size:22px;width:46px;height:46px;border-radius:14px;background:#eef0fb;display:grid;place-items:center}
+.rings{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.ringc{text-align:center}.ringc svg{width:132px;height:132px}
+.rg-bg{fill:none;stroke:#eef0f6;stroke-width:12}.rg-fg{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.rg-t{font:700 24px Inter,system-ui,sans-serif;text-anchor:middle;fill:var(--txt)}
+.ringc b{display:block;margin-top:6px}.ringc span{color:var(--mut);font-size:13px}
 /* ===== LAPORAN ===== */
 .rpt{background:#fff;width:210mm;max-width:100%;margin:0 auto;padding:12mm;font:11pt Arial,sans-serif;color:#000;border:1px solid var(--line)}
 .rpt h3{text-align:center;font-size:14pt;margin:2mm 0 5mm}
@@ -115,21 +140,24 @@ body.locked #login{display:flex}body.locked .sidebar,body.locked .topbar,body.lo
 <div class="topbar"><button onclick="toggleMenu()">☰</button><b>SKP Harian</b></div>
 <nav class="sidebar" id="side">
  <h1>📋 SKP Harian <small class="lbl-ver" style="display:block;font-weight:400;color:#8fa3d6"></small></h1>
- <a data-v="dashboard">Dashboard</a><a data-v="input">Input SKP</a><a data-v="riwayat">Riwayat</a><a data-v="cetak">Cetak</a><a data-v="rekap">Rekap Bulanan</a><a data-v="master">Master Kegiatan</a><a data-v="pengaturan">Pengaturan</a><a data-v="admin">Admin</a>
-<div class="ulbl"><div id="uLbl" style="margin-bottom:8px"></div><a onclick="logout()" style="background:#2a4380;text-align:center">Keluar</a></div>
+ <a data-v="dashboard"><span>📊</span>Dashboard</a><a data-v="input"><span>✍️</span>Input SKP</a><a data-v="riwayat"><span>🗂️</span>Riwayat</a><a data-v="cetak"><span>🖨️</span>Cetak</a><a data-v="rekap"><span>📅</span>Rekap Bulanan</a><a data-v="master"><span>📋</span>Master Kegiatan</a><a data-v="pengaturan"><span>⚙️</span>Pengaturan</a><a data-v="admin"><span>🛡️</span>Admin</a>
+<div class="ulbl"><div id="uLbl" style="margin-bottom:8px"></div><a onclick="logout()" style="background:#4338ca;text-align:center">Keluar</a></div>
 </nav>
 
 <main class="main">
 <!-- DASHBOARD -->
 <section class="view" id="v-dashboard">
- <h2>Dashboard</h2>
- <div class="card"><b id="dNama">-</b><div style="color:var(--mut)" id="dJab">-</div></div>
+ <div class="hero"><div><small>Selamat datang</small><b id="dNama">-</b><div id="dJab">-</div></div>
+  <button class="b" onclick="newInput(today())">+ Input SKP Hari Ini</button></div>
  <div class="grid">
-  <div class="card stat"><b id="dLap">0</b><span>Jumlah laporan</span></div>
-  <div class="card stat"><b id="dKeg">0</b><span>Jumlah kegiatan</span></div>
-  <div class="card stat"><b id="dHari">-</b><span>Laporan hari ini</span></div>
+  <div class="card stat"><i>📄</i><div><b id="dLap">0</b><span>Jumlah laporan</span></div></div>
+  <div class="card stat"><i>✅</i><div><b id="dKeg">0</b><span>Jumlah kegiatan</span></div></div>
+  <div class="card stat"><i>🗓️</i><div><b id="dHari">-</b><span>Laporan hari ini</span></div></div>
  </div>
- <button class="b" onclick="newInput(today())">+ Input SKP Hari Ini</button>
+ <div class="row" style="margin:22px 0 12px;justify-content:space-between"><h2 style="margin:0">Progres SKP</h2>
+  <input type="month" id="dBln" onchange="loadDash()" style="max-width:180px"></div>
+ <div class="grid rings" id="dRings"></div>
+ <p style="color:var(--mut);font-size:12px">Hari kerja dihitung Senin-Jumat (tanpa memperhitungkan hari libur nasional).</p>
 </section>
 
 <!-- INPUT -->
@@ -251,7 +279,7 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;
 let PEG = {}, LIST = [], FOTO = [{},{},{},{}], EDIT = null, CUR = null;
 
 // ===== VERSI, LOGIN, SESI =====
-const APP_VERSION = '1.0';   // 1.0 -> 1.1 ... 1.9 -> 2.0
+const APP_VERSION = '1.1';   // 1.0 -> 1.1 ... 1.9 -> 2.0
 let TOKEN = '', USER = '', ADMINKEY = '', ADLIST = [];
 const store = {
   get: k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } },
@@ -376,6 +404,27 @@ async function refresh() {
   const h = LIST.find(x => x.tanggal === today());
   $('dHari').textContent = h ? 'Sudah (' + h.jumlah + ')' : 'Belum';
   renderList();
+  if ($('v-dashboard').classList.contains('on')) loadDash();
+}
+function ring(p, title, sub, color) {
+  const r = 52, c = 2 * Math.PI * r, v = Math.max(0, Math.min(100, p || 0));
+  return `<div class="card ringc"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="${r}" class="rg-bg"/><circle cx="60" cy="60" r="${r}" class="rg-fg" transform="rotate(-90 60 60)" style="stroke:${color};stroke-dasharray:${c};stroke-dashoffset:${c}" data-off="${c * (1 - v / 100)}"/><text x="60" y="68" class="rg-t">${Math.round(v)}%</text></svg><b>${title}</b><span>${sub}</span></div>`;
+}
+async function loadDash() {
+  if (!$('dBln').value) $('dBln').value = today().slice(0, 7);
+  const b = $('dBln').value; let reps = [];
+  try { reps = await call('getBulan', { bulan: b }); } catch (e) { return; }
+  const [y, m] = b.split('-').map(Number), n = new Date(y, m, 0).getDate();
+  let kerja = 0; for (let d = 1; d <= n; d++) { const g = new Date(y, m - 1, d).getDay(); if (g > 0 && g < 6) kerja++; }
+  const items = reps.flatMap(r => r.items), T = items.reduce((a, x) => a + (+x.target || 0), 0), R = items.reduce((a, x) => a + (+x.realisasi || 0), 0);
+  const cap = items.length ? items.reduce((a, x) => a + (+x.capaian || 0), 0) / items.length : 0;
+  const withFoto = reps.filter(r => r.fotos.some(f => f.url)).length;
+  $('dRings').innerHTML =
+    ring(kerja ? reps.length / kerja * 100 : 0, 'Progres Laporan', reps.length + ' dari ' + kerja + ' hari kerja', '#4f46e5') +
+    ring(cap, 'Rata-rata Capaian', items.length + ' kegiatan', '#16a34a') +
+    ring(T ? R / T * 100 : 0, 'Realisasi / Target', R + ' dari ' + T + ' target', '#0ea5e9') +
+    ring(reps.length ? withFoto / reps.length * 100 : 0, 'Kelengkapan Foto', withFoto + ' dari ' + reps.length + ' laporan', '#f59e0b');
+  requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.rg-fg').forEach(e => e.style.strokeDashoffset = e.dataset.off)));
 }
 function renderList() {
   const d = $('fTgl').value, b = $('fBln').value, q = $('fTxt').value.toLowerCase();
